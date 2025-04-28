@@ -10,6 +10,7 @@
 
 class SignUpSheetController < ApplicationController
   include AuthorizationHelper
+  include DeadlineHelper
 
   require 'rgl/adjacency'
   require 'rgl/dot'
@@ -545,8 +546,17 @@ class SignUpSheetController < ApplicationController
     @sign_up_topic.category = params[:topic][:category]
     @sign_up_topic.assignment_id = params[:id]
 
-    # Find the user by name
-    @sign_up_topic.mentor_id = User.find_by(name: params[:topic][:mentor_username]).id
+    # Conditionally set the mentor_id
+    if params[:add_mentor] == '1' && params[:topic][:mentor_username].present?
+      mentor = User.find_by(name: params[:topic][:mentor_username])
+      if mentor
+        @sign_up_topic.mentor_id = mentor.id
+      else
+        flash[:error] = "Mentor username '#{params[:topic][:mentor_username]}' does not exist."
+        render action: 'new', id: params[:id] # Or wherever your form is
+        return # Important to stop further execution if mentor is not found
+      end
+    end
 
     @assignment = Assignment.find(params[:id])
   end

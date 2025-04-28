@@ -27,8 +27,11 @@
   </tr>
 
   <tr>
-    <td><label for="mentor_username">Topic Mentor Username:  </label></td>
-    <td><%= text_field 'topic', 'mentor_username', size: 10 %></td>
+    <td><%= check_box_tag 'add_mentor' %> <label for="add_mentor">Add Mentor</label></td>
+    <td id="mentor_username_field" style="display: none;">
+      <label for="topic_mentor_username">Topic Mentor Username:</label>
+      <%= text_field 'topic', 'mentor_username', size: 10 %>
+    </td>
   </tr>
 
 </table> 
@@ -40,3 +43,18 @@
 <% end %>
 
 <br/>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addMentorCheckbox = document.getElementById('add_mentor');
+        const mentorUsernameField = document.getElementById('mentor_username_field');
+
+        addMentorCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                mentorUsernameField.style.display = 'table-cell'; // Or 'block' depending on your layout
+            } else {
+                mentorUsernameField.style.display = 'none';
+            }
+        });
+    });
+</script>
